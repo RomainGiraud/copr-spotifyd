@@ -15,25 +15,23 @@ Requires:       openssl pulseaudio-libs alsa-lib dbus
 Spotifyd streams music just like the official client, but is more lightweight and supports more platforms. Spotifyd also supports the Spotify Connect protocol, which makes it show up as a device that can be controlled from the official clients.
 
 %prep
-%autosetup
+%autosetup -n %{crate}-%{version_no_tilde} -p1
+%cargo_prep
 
+%generate_buildrequires
+%cargo_generate_buildrequires
 
 %build
-%configure
-%make_build
+%cargo_build --release --no-default-features --features pulseaudio_backend,dbus_keyring,dbus_mpris
 
 
 %install
-%make_install
+%cargo_install
 
-
+%if %{with check}
 %check
-
-
-%files
-%license
-%doc
-
+%cargo_test
+%endif
 
 %changelog
 %{autochangelog}
